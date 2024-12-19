@@ -2,7 +2,7 @@ import time
 import cohere
 import os
 
-co = cohere.ClientV2(api_key=os.getenv("COHERE_API_KEY"))
+
 
 def get_chatbot_response(client, messages, model_name="llama-3.1-8b-instant", temperature=0, retries=3, delay=2):
     input_messages = []
@@ -21,16 +21,16 @@ def get_chatbot_response(client, messages, model_name="llama-3.1-8b-instant", te
             return response
         except Exception as e:
             if attempt < retries - 1:
-                time.sleep(delay)  # Retry after delay
+                time.sleep(delay)  
             else:
-                raise e  # Raise exception after final attempt
+                raise e  
 
-def get_embedding(text_input):
+def get_embedding(co, text):
     response = co.embed(
-        texts=text_input,
-        model='embed-english-v3.0',
-        input_type='search_document',
-        embedding_types=["float"]
+        texts=[text],
+        input_type="search_query",
+        embedding_types=["float"],
+        model="embed-english-v3.0"
     )
-    
-    return response.embeddings.float_  # Ensure correct attribute access
+    # Access the float embeddings from the response
+    return response.embeddings.float_
