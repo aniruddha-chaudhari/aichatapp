@@ -18,6 +18,7 @@ def get_chatbot_response(client, messages, model_name="llama-3.1-8b-instant", te
                 top_p=0.8,
                 max_tokens=2000,
             ).choices[0].message.content
+            response = response.replace("`", " ")
             return response
         except Exception as e:
             if attempt < retries - 1:
