@@ -16,7 +16,7 @@ export default function Index() {
       
       <TouchableOpacity
       className="bg-[#c67c4e] h-16 mx-6 mb-10 rounded-lg items-center justify-center"
-      onPress={()=>{router.push('/(tabs)/Home')}}
+      onPress={()=>{router.push("/[tabs]/Home")}}
       >
         <Text className="text-white text-center text-2xl font-[sora-bold]">Get Started</Text>
       </TouchableOpacity>
