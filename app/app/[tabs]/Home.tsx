@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons'
 import SearchArea from '@/components/SearchArea'
 import Banner from '@/components/Banner'
 import { router } from 'expo-router'
+import { useCart } from '@/components/CartContext'
 
 
 export interface ProductCategory {
@@ -15,6 +16,7 @@ export interface ProductCategory {
 }
 
 const Home = () => {
+  const {addToCart,cartItems} = useCart();
   const [products, setProducts] = useState<Product[]>([])
   const [shownProducts, setShownProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<ProductCategory[]>([])
@@ -75,12 +77,6 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  console.log('Rendering with:', {
-    productsCount: products.length,
-    shownProductsCount: shownProducts.length,
-    categoriesCount: categories.length,
-    selectedCategory
-  });
 
   if (loading) {
     return (
@@ -90,6 +86,10 @@ const Home = () => {
     )
   }
 
+  const addButton = (name:string) => {
+    addToCart(name, 1);
+    console.log(cartItems);
+  };
 
 
   return (
@@ -174,6 +174,8 @@ const Home = () => {
                   ${item.price}
                 </Text>
                 <TouchableOpacity
+                  onPress = {() => addButton(item.name)}
+                  
                 >
                   <View className='bg-[#C67C4E] h-8 w-8 rounded-xl items-center justify-center'>
                     <AntDesign name="plus" size={20} color="white" />

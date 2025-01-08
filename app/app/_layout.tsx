@@ -1,3 +1,4 @@
+import { CartProvider } from "@/components/CartContext";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { NativeWindStyleSheet } from 'nativewind';
@@ -13,7 +14,9 @@ export default function RootLayout() {
    'sora-semi': require('../assets/fonts/Sora-SemiBold.ttf'),
    'sora-bold': require('../assets/fonts/Sora-Bold.ttf'),
   })
-  return <Stack>
+  return (
+  <CartProvider>
+  <Stack>
     <Stack.Screen name="index"
     options={{headerShown: false}}
     />
@@ -24,4 +27,6 @@ export default function RootLayout() {
     options={{headerShown: false}}
     />
   </Stack>
+  </CartProvider>
+  )
 }
