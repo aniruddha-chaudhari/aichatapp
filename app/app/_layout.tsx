@@ -17,6 +17,9 @@ export default function RootLayout() {
     <Stack.Screen name="index"
     options={{headerShown: false}}
     />
+    <Stack.Screen name="details"
+    options={{headerShown: true}}
+    />
     <Stack.Screen name="[tabs]"
     options={{headerShown: false}}
     />

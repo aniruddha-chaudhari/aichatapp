@@ -6,6 +6,7 @@ import { TouchableOpacity, GestureHandlerRootView } from 'react-native-gesture-h
 import { AntDesign } from '@expo/vector-icons'
 import SearchArea from '@/components/SearchArea'
 import Banner from '@/components/Banner'
+import { router } from 'expo-router'
 
 
 export interface ProductCategory {
@@ -15,42 +16,71 @@ export interface ProductCategory {
 
 const Home = () => {
   const [products, setProducts] = useState<Product[]>([])
-  const [catgories, setCategories] = useState<ProductCategory[]>([])
-  const [selectedCategory, setSelectedCategory] = useState('All')
+  const [shownProducts, setShownProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<ProductCategory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [loading, setLoading] = useState(true)
 
+  // Update category selection and filter products
   useEffect(() => {
-    if (catgories.length > 0) {
-      const uniqueCategories = catgories.map((category) => ({
+    console.log('Category Selection Changed:', selectedCategory);
+    console.log('Current Categories:', categories);
+
+    if (categories.length > 0) {
+      // Update category selection state
+      const uniqueCategories = categories.map((category) => ({
         id: category.id,
         selected: selectedCategory === category.id,
       }));
-      setCategories(uniqueCategories);
+      console.log('Updated Categories:', uniqueCategories);
+      setCategories([...uniqueCategories]);
+
+      // Filter products based on selected category
+      if (selectedCategory === 'All') {
+        console.log('Showing all products:', products.length);
+        setShownProducts(products);
+      } else {
+        const filtered = products.filter(product => product.category === selectedCategory);
+        console.log('Filtered products:', filtered.length, 'for category:', selectedCategory);
+        setShownProducts(filtered);
+      }
     }
-  }, [selectedCategory, catgories]);
+  }, [selectedCategory]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const products = await getproducts()
+        console.log('Fetched products:', products.length);
+
         const categories = products.map((product) => product.category)
         categories.unshift('All')
+        console.log('Initial categories:', categories);
 
         const uniqueCategories = Array.from(new Set(categories)).map((category) => ({
           id: category,
           selected: category === selectedCategory,
         }))
+        console.log('Initial unique categories:', uniqueCategories);
 
         setProducts(products);
+        setShownProducts(products); // Initialize shown products
         setCategories(uniqueCategories);
       } catch (e) {
-        console.log(e);
+        console.error('Error fetching products:', e);
       } finally {
         setLoading(false);
       }
     };
     fetchProducts();
   }, []);
+
+  console.log('Rendering with:', {
+    productsCount: products.length,
+    shownProductsCount: shownProducts.length,
+    categoriesCount: categories.length,
+    selectedCategory
+  });
 
   if (loading) {
     return (
@@ -73,22 +103,55 @@ const Home = () => {
           columnWrapperStyle={{ justifyContent: 'space-between', marginHorizontal: 10 }}
           contentContainerStyle={{ paddingBottom: 20, paddingTop: 20 }}
           keyExtractor={(item, index) => index.toString()}
-          data={products}
+          data={shownProducts} // Use filtered products
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={() => (
-            <View className="px-4 pt-8 pb-4">
-              <Text className="text-2xl font-[sora-semi] text-[#2F2D2C] mb-4">
-                Home
-              </Text>
+            <View>
+
               <SearchArea />
               <Banner />
+              <FlatList
+                className='mt-6 w-[90%] mb-2'
+                data={categories}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => {
+                    console.log('Category pressed:', item.id);
+                    setSelectedCategory(item.id);
+                  }}>
+                    <Text
+                      className={`text-sm mr-4 font-[Sora-Regular] p-3 rounded-lg 
+                        ${item.selected ? 'text-white' : 'text-[#313131]'}
+                        ${item.selected ? 'bg-[#C67C4E] ' : 'bg-[#EDEDED] '}
+                        `}
+                    >{item.id}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              />
             </View>
           )}
           renderItem={({ item }) => (
             <View
               className='w-[48%] mt-2 bg-white rounded-2xl p-2 flex justify-between'>
+              <TouchableOpacity
 
-              <TouchableOpacity>
+                onPress={() => {
+
+                  router.push({
+                    pathname: '/details', params: {
+                      name: item.name,
+                      image_url: item.image_url,
+                      type: item.category,
+                      price: item.price,
+                      rating: item.rating,
+                      description: item.description,
+                    }
+                  })
+                }
+                }
+              >
                 <Image
                   className='w-full h-32 rounded-xl'
                   source={{ uri: item.image_url }}
@@ -111,7 +174,6 @@ const Home = () => {
                   ${item.price}
                 </Text>
                 <TouchableOpacity
-
                 >
                   <View className='bg-[#C67C4E] h-8 w-8 rounded-xl items-center justify-center'>
                     <AntDesign name="plus" size={20} color="white" />

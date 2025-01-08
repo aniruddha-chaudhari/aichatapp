@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+app/config/supabaseConfig.ts
 # Expo
 .expo/
 dist/
