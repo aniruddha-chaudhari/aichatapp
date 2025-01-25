@@ -1,3 +1,4 @@
+import logging
 from agents import (GuardAgent,ClassificationAgent,DetailsAgent,AgentProtocol,RecommendationAgent,OrderTakingAgent)
 from typing import Dict
 import os
@@ -16,9 +17,10 @@ class AgentController():
             "recommendation_agent": self.recommendation_agent,
             "order_taking_agent": OrderTakingAgent(self.recommendation_agent),
          }
-        
+        logging.basicConfig(level=logging.INFO)
 
     def get_response(self,input):
+        logging.info("Received input: %s", input)
 
         job_input = input["input"]
         messages = job_input["messages"]

@@ -8,6 +8,7 @@ import SearchArea from '@/components/SearchArea'
 import Banner from '@/components/Banner'
 import { router } from 'expo-router'
 import { useCart } from '@/components/CartContext'
+import Toast from 'react-native-root-toast'
 
 
 export interface ProductCategory {
@@ -25,8 +26,8 @@ const Home = () => {
 
   // Update category selection and filter products
   useEffect(() => {
-    console.log('Category Selection Changed:', selectedCategory);
-    console.log('Current Categories:', categories);
+    // console.log('Category Selection Changed:', selectedCategory);
+    // console.log('Current Categories:', categories);
 
     if (categories.length > 0) {
       // Update category selection state
@@ -34,16 +35,16 @@ const Home = () => {
         id: category.id,
         selected: selectedCategory === category.id,
       }));
-      console.log('Updated Categories:', uniqueCategories);
+      // console.log('Updated Categories:', uniqueCategories);
       setCategories([...uniqueCategories]);
 
       // Filter products based on selected category
       if (selectedCategory === 'All') {
-        console.log('Showing all products:', products.length);
+        // console.log('Showing all products:', products.length);
         setShownProducts(products);
       } else {
         const filtered = products.filter(product => product.category === selectedCategory);
-        console.log('Filtered products:', filtered.length, 'for category:', selectedCategory);
+        // console.log('Filtered products:', filtered.length, 'for category:', selectedCategory);
         setShownProducts(filtered);
       }
     }
@@ -53,23 +54,23 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const products = await getproducts()
-        console.log('Fetched products:', products.length);
+        // console.log('Fetched products:', products.length);
 
         const categories = products.map((product) => product.category)
         categories.unshift('All')
-        console.log('Initial categories:', categories);
+        // console.log('Initial categories:', categories);
 
         const uniqueCategories = Array.from(new Set(categories)).map((category) => ({
           id: category,
           selected: category === selectedCategory,
         }))
-        console.log('Initial unique categories:', uniqueCategories);
+        // console.log('Initial unique categories:', uniqueCategories);
 
         setProducts(products);
         setShownProducts(products); // Initialize shown products
         setCategories(uniqueCategories);
       } catch (e) {
-        console.error('Error fetching products:', e);
+        // console.error('Error fetching products:', e);
       } finally {
         setLoading(false);
       }
@@ -88,7 +89,14 @@ const Home = () => {
 
   const addButton = (name:string) => {
     addToCart(name, 1);
-    console.log(cartItems);
+    Toast.show(`Added ${name} to cart`, {
+      duration: Toast.durations.SHORT,
+      position: Toast.positions.BOTTOM,
+      shadow: true,
+      animation: true,
+      hideOnPress: true,
+      delay: 0,
+    });
   };
 
 
@@ -117,7 +125,7 @@ const Home = () => {
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
                   <TouchableOpacity onPress={() => {
-                    console.log('Category pressed:', item.id);
+                    // console.log('Category pressed:', item.id);
                     setSelectedCategory(item.id);
                   }}>
                     <Text

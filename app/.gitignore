@@ -3,6 +3,7 @@
 # dependencies
 node_modules/
 supabaseConfig.ts
+backendConfig.ts
 # Expo
 .expo/
 dist/

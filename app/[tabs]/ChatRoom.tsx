@@ -1,3 +1,4 @@
+
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import PageHeader from '@/components/PageHeader'
@@ -19,7 +20,8 @@ const ChatRoom = () => {
   const inputref = useRef<TextInput>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
 
-  const handleSendMessage =async () => {
+  const handleSendMessage = async () => {
+    console.log('Using API URL:', process.env.REACT_APP_API_URL || 'http://192.168.1.100:8000');
     let message = textref.current.trim();
     if (message.length === 0) {
       return;
